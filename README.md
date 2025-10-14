@@ -1,4 +1,4 @@
-# Sistema de Gestão de Estoque
+# SmartStock | Sistema de Gestão de Estoque
 
 ## Descrição
 
