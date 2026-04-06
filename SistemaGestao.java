@@ -9,19 +9,38 @@ public class SistemaGestao {
         scanner = new Scanner(System.in);
     }
 
+    private int lerInteiro(String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Digite um número inteiro.");
+            }
+        }
+    }
+
+    private double lerDouble(String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            try {
+                return Double.parseDouble(scanner.nextLine().trim().replace(",", "."));
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Digite um número válido.");
+            }
+        }
+    }
+
     public void menuPrincipal() {
         while (true) {
-            System.out.println("Sistema de Gestão de Estoque - Marizardo Moto Peças");
+            System.out.println("\nSistema de Gestão de Estoque - Marizardo Moto Peças");
             System.out.println("1. Adicionar Produto");
             System.out.println("2. Remover Produto");
             System.out.println("3. Atualizar Quantidade");
             System.out.println("4. Buscar Produto");
             System.out.println("5. Listar Produtos");
             System.out.println("6. Sair");
-            System.out.print("Escolha uma opção: ");
-
-            int escolha = scanner.nextInt();
-            scanner.nextLine();
+            int escolha = lerInteiro("Escolha uma opção: ");
 
             switch (escolha) {
                 case 1:
@@ -41,6 +60,7 @@ public class SistemaGestao {
                     break;
                 case 6:
                     System.out.println("Saindo...");
+                    scanner.close();
                     return;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
@@ -50,47 +70,53 @@ public class SistemaGestao {
 
     private void adicionarProduto() {
         System.out.print("Digite o código do produto: ");
-        String codigo = scanner.nextLine();
-        System.out.print("Digite o nome do produto: ");
-        String nome = scanner.nextLine();
-        System.out.print("Digite o preço do produto: ");
-        double preco = scanner.nextDouble();
-        System.out.print("Digite a quantidade do produto: ");
-        int quantidade = scanner.nextInt();
-        scanner.nextLine();
+        String codigo = scanner.nextLine().trim();
 
-        Produto produto = new Produto(codigo, nome, preco, quantidade);
-        estoque.adicionarProduto(produto);
+        System.out.print("Digite o nome do produto: ");
+        String nome = scanner.nextLine().trim();
+
+        double preco = lerDouble("Digite o preço do produto: ");
+        if (preco < 0) {
+            System.out.println("Preço não pode ser negativo.");
+            return;
+        }
+
+        int quantidade = lerInteiro("Digite a quantidade do produto: ");
+        if (quantidade < 0) {
+            System.out.println("Quantidade não pode ser negativa.");
+            return;
+        }
+
+        estoque.adicionarProduto(new Produto(codigo, nome, preco, quantidade));
         System.out.println("Produto adicionado com sucesso!");
     }
 
     private void removerProduto() {
         System.out.print("Digite o código do produto a ser removido: ");
-        String codigo = scanner.nextLine();
-        estoque.removerProduto(codigo);
-        System.out.println("Produto removido com sucesso!");
+        String codigo = scanner.nextLine().trim();
+        boolean removido = estoque.removerProduto(codigo);
+        System.out.println(removido ? "Produto removido com sucesso!" : "Produto não encontrado.");
     }
 
     private void atualizarQuantidade() {
         System.out.print("Digite o código do produto: ");
-        String codigo = scanner.nextLine();
-        System.out.print("Digite a nova quantidade: ");
-        int quantidade = scanner.nextInt();
-        scanner.nextLine();
+        String codigo = scanner.nextLine().trim();
 
-        estoque.atualizarQuantidade(codigo, quantidade);
-        System.out.println("Quantidade atualizada com sucesso!");
+        int quantidade = lerInteiro("Digite a nova quantidade: ");
+        if (quantidade < 0) {
+            System.out.println("Quantidade não pode ser negativa.");
+            return;
+        }
+
+        boolean atualizado = estoque.atualizarQuantidade(codigo, quantidade);
+        System.out.println(atualizado ? "Quantidade atualizada com sucesso!" : "Produto não encontrado.");
     }
 
     private void buscarProduto() {
         System.out.print("Digite o código do produto: ");
-        String codigo = scanner.nextLine();
+        String codigo = scanner.nextLine().trim();
         Produto produto = estoque.buscarProduto(codigo);
-        if (produto != null) {
-            System.out.println(produto);
-        } else {
-            System.out.println("Produto não encontrado.");
-        }
+        System.out.println(produto != null ? produto : "Produto não encontrado.");
     }
 
     private void listarProdutos() {
@@ -103,4 +129,3 @@ public class SistemaGestao {
         sistema.menuPrincipal();
     }
 }
-
