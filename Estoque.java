@@ -12,22 +12,28 @@ public class Estoque {
         produtos.put(produto.getCodigo(), produto);
     }
 
-    public void removerProduto(String codigo) {
-        produtos.remove(codigo);
+    public boolean removerProduto(String codigo) {
+        return produtos.remove(codigo) != null;
     }
 
     public Produto buscarProduto(String codigo) {
         return produtos.get(codigo);
     }
 
-    public void atualizarQuantidade(String codigo, int quantidade) {
+    public boolean atualizarQuantidade(String codigo, int quantidade) {
         Produto produto = produtos.get(codigo);
         if (produto != null) {
             produto.setQuantidade(quantidade);
+            return true;
         }
+        return false;
     }
 
     public void listarProdutos() {
+        if (produtos.isEmpty()) {
+            System.out.println("Estoque vazio.");
+            return;
+        }
         for (Produto produto : produtos.values()) {
             System.out.println(produto);
         }
